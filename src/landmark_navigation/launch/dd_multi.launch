@@ -1,0 +1,21 @@
+<launch>
+    <arg name="first_robot"  default="robot1"/>
+    <arg name="second_robot" default="robot2"/>
+    <!-- Whether to open rviz. -->
+    <arg name="use_rviz" default="true"/>
+    <!-- Name of map to use. -->
+    <arg name="map" default="my_map"/>
+    <!-- Name of landmarks file. -->
+    <arg name="landmarks" default="landmarks"/>
+    <param name="landmarks_file" type="str" value="$(find landmark_navigation)/landmarks/$(arg landmarks).yaml"/>
+
+    <!-- Start the landmark_nav node. -->
+    <node name="landmark_nav_1" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <remap from="/clicked_point" to="/$(arg first_robot)/clicked_point"/>
+    </node>
+
+    <node name="landmark_nav_2" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <remap from="/clicked_point" to="/$(arg second_robot)/clicked_point"/>
+    </node>
+
+</launch>

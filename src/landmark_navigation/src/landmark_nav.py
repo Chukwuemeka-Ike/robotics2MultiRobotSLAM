@@ -8,7 +8,7 @@ import yaml
 
 import rospy
 
-from move_base_msgs.msg import *
+# from move_base_msgs.msg import *
 from geometry_msgs.msg import PointStamped
 
 if sys.platform == 'win32':
@@ -61,11 +61,6 @@ class LandmarkNav(threading.Thread):
         msg.point.y = y
         self.publisher.publish(msg)
 
-    # def stop(self):
-    #     '''.'''
-    #     self.done = True
-    #     self.join()
-
     def cancel(self):
         '''.'''
         self.publisher.unregister()
@@ -99,18 +94,18 @@ def restoreTerminalSettings(old_settings):
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 if __name__=="__main__":
-    # Get the landmarks_file argument.
-    if len(sys.argv) < 2:
-        rospy.logwarn(
-            "Incorrect number of arguments. Using default landmarks file "
-            "landmarks/landmarks.yaml"
-        )
-    landmarks_file = "landmarks/landmarks.yaml"
-    # else:
-    #     exit()
-    # print("\n\n")
-    # landmarks_file = rospy.get_param("/landmark_nav/landmarks_file")
-    # print("LANDMARKS FILE: ".format(landmarks_file))
+    # Start the node and get parameters.
+    rospy.init_node('landmark_nav')
+
+    # Get the landmarks_file or set it to the default.
+    landmarks_file = rospy.get_param("landmarks_file", "landmarks/landmarks.yaml")
+    print("Loading landmarks from {}".format(landmarks_file))
+
+    repeat = rospy.get_param("~repeat_rate", 0.0)
+    key_timeout = rospy.get_param("~key_timeout", 0.5)
+
+    settings = saveTerminalSettings()
+    pub_thread = LandmarkNav(repeat)
 
     # Load the landmarks file.
     with open(landmarks_file, 'r') as file:
@@ -137,15 +132,8 @@ Type the desired landmark # to start navigation to it.
 CTRL-C to quit.
     """.format(landmarks_msg)
 
-    settings = saveTerminalSettings()
-    rospy.init_node('landmark_nav')
-
-    repeat = rospy.get_param("~repeat_rate", 0.0)
-    key_timeout = rospy.get_param("~key_timeout", 0.5)
-
-    pub_thread = LandmarkNav(repeat)
-
     try:
+        # Wait until subscribers exist before starting.
         pub_thread.wait_for_subscribers()
         print(msg)
         while(1):
@@ -173,5 +161,4 @@ CTRL-C to quit.
     except Exception as e:
         print(e)
     finally:
-        # pub_thread.stop()
         restoreTerminalSettings(settings)

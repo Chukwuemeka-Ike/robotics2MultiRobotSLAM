@@ -1,0 +1,37 @@
+<launch>
+    <arg name="first_robot"  default="robot1"/>
+    <arg name="second_robot" default="robot2"/>
+    <arg name="use_rviz" default="false"/>
+    <arg name="map" default="team4_map"/>
+    <arg name="landmarks" default="landmarks"/>
+    <param name="landmarks_file" value="$(find landmark_navigation)/landmarks/$(arg landmarks).yaml"/>
+    
+    <!-- Load map. -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find yahboomcar_multi)/maps/$(arg map).yaml"/>
+
+    <!-- Multi machine handle control. -->
+    <include file="$(find landmark_navigation)/launch/joy_multi.launch">
+        <arg name="first_robot"  value="$(arg first_robot)"/>
+        <arg name="second_robot" value="$(arg second_robot)"/>
+    </include>
+
+    <!-- Mobile app node. -->
+    <include file="$(find yahboomcar_nav)/launch/library/app.launch"/>
+
+    <!-- Robot 1. -->
+    <include file="$(find yahboomcar_multi)/launch/library/move_base_multi.launch">
+        <arg name="ns" value="$(arg first_robot)"/>
+    </include>
+    <node name="landmark_nav_1" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <remap from="/clicked_point" to="/$(arg first_robot)/clicked_point"/>
+    </node>
+
+    <!-- Robot 2. -->
+    <include file="$(find yahboomcar_multi)/launch/library/move_base_multi.launch">
+        <arg name="ns" value="$(arg second_robot)"/>
+    </include>
+    <node name="landmark_nav_2" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <remap from="/clicked_point" to="/$(arg second_robot)/clicked_point"/>
+    </node>
+
+</launch>
