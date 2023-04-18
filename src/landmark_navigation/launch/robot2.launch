@@ -1,0 +1,9 @@
+<launch>
+
+  <include ns="robot2" file="$(find yahboomcar_nav)/launch/laser_usb_bringup.launch"/>
+
+  <include ns="robot2" file="$(find yahboomcar_nav)/launch/yahboomcar_map.launch">
+  	<arg name="use_rviz" default="false"/>
+  	<arg name="map_type" default="gmapping"/>
+  </include> 
+</launch>

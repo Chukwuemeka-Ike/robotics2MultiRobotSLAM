@@ -1,0 +1,14 @@
+<launch>
+    <!-- Whether to open rviz. -->
+    <arg name="use_rviz" default="true"/>
+    <!-- Name of map to use. -->
+    <arg name="map" default="my_map"/>
+    <!-- Name of landmarks file. -->
+    <arg name="landmarks" default="landmarks"/>
+
+    <!-- Start the landmark_nav node. -->
+    <node name="landmark_nav" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <param name="landmarks_file" value="$(find landmark_navigation)/landmarks/$(arg landmarks).yaml"/>
+    </node>
+
+</launch>

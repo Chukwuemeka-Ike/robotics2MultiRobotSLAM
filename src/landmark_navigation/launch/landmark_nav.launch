@@ -1,0 +1,38 @@
+<launch>
+    <!-- Whether to open rviz. -->
+    <arg name="use_rviz" default="true"/>
+    <!-- Name of map to use. -->
+    <arg name="map" default="my_map"/>
+    <!-- Name of landmarks file. -->
+    <arg name="landmarks" default="landmarks"/>
+
+    <!-- Start the landmark_nav node. -->
+    <node name="landmark_nav" pkg="landmark_navigation" type="landmark_nav.py" output="screen">
+        <param name="landmarks_file" value="$(find landmark_navigation)/landmarks/$(arg landmarks).yaml"/>
+    </node>
+
+    <!-- Start yahboomcar_nav car bringup. -->
+    <include file="$(find yahboomcar_nav)/launch/laser_bringup.launch"/>
+
+    <!-- Start yahboomcar_navigation. -->
+    <!-- <include file="$(find yahboomcar_nav)/launch/yahboomcar_navigation.launch"/> -->
+
+    <!-- Thee following were taken from yahboomcar_nav/yahboomcar_navigation.launch -->
+    <!-- Node for sending and receiving map goal commands. -->
+    <node name='send_mark' pkg="yahboomcar_nav" type="send_mark.py"/>
+
+    <!-- Load the map into the server. -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find landmark_navigation)/maps/$(arg map).yaml"/>
+
+    <!-- AMCL. -->
+    <include file="$(find yahboomcar_nav)/launch/library/amcl.launch"/>
+
+    <!-- App. -->
+    <include file="$(find yahboomcar_nav)/launch/library/app.launch"/>
+
+    <!-- Launch move_base node. -->
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch"/>
+
+    <!-- RVIZ -->
+    <include file="$(find yahboomcar_nav)/launch/view/view_navigate.launch" if="$(arg use_rviz)"/>
+</launch>

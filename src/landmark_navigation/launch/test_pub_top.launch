@@ -1,0 +1,11 @@
+<launch>
+    <arg name="ns" default="robot1"/>
+    <arg name="scan_topic" default="$(arg ns)/scan"/>
+    <include ns="$(arg ns)" file="$(find landmark_navigation)/launch/test_pub_nest.launch"/>
+    
+    <node name="pub_text" pkg="rostopic" type="rostopic"
+     args="pub /msg std_msgs/String '$(arg scan_topic)'"
+     output="screen" />
+    <node name="print_text" pkg="rostopic" type="rostopic"
+        args="echo /msg" output="screen" />
+</launch>
