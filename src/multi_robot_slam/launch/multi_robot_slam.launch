@@ -1,0 +1,74 @@
+<!-- http://wiki.ros.org/multirobot_map_merge -->
+<!-- 
+    Launch this on the main robot running roscore.
+    It takes starts the robot's sensors and mapping algorithm, as well
+    as the multi map merge node.
+-->
+<launch>
+    <arg name="first_robot"  default="robot1"/>
+    <arg name="second_robot" default="robot2"/>
+    <arg name="use_rviz" default="false"/>
+    <arg name="map_type" default="gmapping"/>
+
+    <include ns="$(arg first_robot)" file="$(find multi_robot_slam)/launch/laser_usb_bringup.launch">
+        <arg name="ns" value="$(arg first_robot)"/>
+    </include>
+    <include ns="$(arg first_robot)" file="$(find multi_robot_slam)/launch/map.launch">
+        <arg name="ns" value="$(arg first_robot)"/>
+        <arg name="map_type" value="$(arg map_type)"/>
+    </include>
+    <!-- <include file="$(find yahboomcar_nav)/launch/library/$(arg map_type).launch">
+        <arg name="scan_topic" default="$()scan"/>
+        <arg name="base_frame" default="base_footprint"/>
+        <arg name="odom_frame" value="odom"/>
+        <arg name="map_frame" value="map"/>
+    </include> -->
+    <!-- <include file="$(find yahboomcar_nav)/launch/library/app.launch"/> -->
+
+
+    <!--Set the initial pose of the two robots. -->
+    <arg name="first_x_pos" default=" 3.25"/>
+    <arg name="first_y_pos" default=" 0.16"/>
+    <arg name="first_z_pos" default=" 0.0"/>
+    <arg name="first_yaw"   default=" 0.0"/>
+
+    <arg name="second_x_pos" default=" 0.72"/>
+    <arg name="second_y_pos" default=" 0.16"/>
+    <arg name="second_z_pos" default=" 0.0"/>
+    <arg name="second_yaw"   default=" 0.0"/>
+
+    <group ns="$(arg first_robot)/map_merge">
+        <param name="init_pose_x"   value="$(arg first_x_pos)"/>
+        <param name="init_pose_y"   value="$(arg first_y_pos)"/>
+        <param name="init_pose_z"   value="$(arg first_z_pos)"/>
+        <param name="init_pose_yaw" value="$(arg first_yaw)"  />
+    </group>
+
+    <group ns="$(arg second_robot)/map_merge">
+        <param name="init_pose_x"   value="$(arg second_x_pos)"/>
+        <param name="init_pose_y"   value="$(arg second_y_pos)"/>
+        <param name="init_pose_z"   value="$(arg second_z_pos)"/>
+        <param name="init_pose_yaw" value="$(arg second_yaw)"  />
+    </group>
+
+    <node pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
+        <param name="robot_map_topic" value="map"/>
+        <!--Check this on real robot-->
+        <param name="robot_namespace" value=""/>
+        <param name="merged_map_topic" value="map"/>
+        <param name="world_frame" value="map"/>
+        <!--May not know the initial pose-->
+        <param name="known_init_poses" value="true"/>
+        <param name="merging_rate" value="1"/>
+        <param name="discovery_rate" value="0.05"/>
+        <param name="estimation_rate" value="0.5"/>
+        <param name="estimation_confidence" value="1.0"/>
+    </node>
+
+    <node pkg="tf" type="static_transform_publisher" 
+        name="world_to_$(arg first_robot)_tf_broadcaster"  
+        args="0 0 0 0 0 0 /map /$(arg first_robot)/map 100"/>
+    <node pkg="tf" type="static_transform_publisher" 
+        name="world_to_$(arg second_robot)_tf_broadcaster" 
+        args="0 0 0 0 0 0 /map /$(arg second_robot)/map 100"/>
+</launch>

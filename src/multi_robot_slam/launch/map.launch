@@ -1,0 +1,9 @@
+<launch>
+    <arg name="ns" default="robot1"/>
+    <arg name="map_type" default="gmapping" doc="opt: gmapping,hector,karto,cartographer"/>
+
+    <include file="$(find multi_robot_slam)/launch/$(arg map_type).launch">
+        <arg name="ns" value="$(arg ns)"/>
+    </include> 
+    <include file="$(find yahboomcar_nav)/launch/library/app.launch"/>
+</launch>
