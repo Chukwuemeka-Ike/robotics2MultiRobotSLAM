@@ -10,7 +10,7 @@
     <arg name="use_rviz" default="false"/>
     <arg name="map_type" default="gmapping"/>
 
-    <include ns="$(arg first_robot)" file="$(find multi_robot_slam)/launch/laser_usb_bringup.launch">
+    <include file="$(find multi_robot_slam)/launch/laser_usb_bringup.launch">
         <arg name="ns" value="$(arg first_robot)"/>
     </include>
     <include ns="$(arg first_robot)" file="$(find multi_robot_slam)/launch/map.launch">
@@ -27,7 +27,7 @@
 
 
     <!--Set the initial pose of the two robots. -->
-    <arg name="first_x_pos" default=" 3.25"/>
+    <arg name="first_x_pos" default=" 1.12"/>
     <arg name="first_y_pos" default=" 0.16"/>
     <arg name="first_z_pos" default=" 0.0"/>
     <arg name="first_yaw"   default=" 0.0"/>
@@ -67,7 +67,7 @@
 
     <node pkg="tf" type="static_transform_publisher" 
         name="world_to_$(arg first_robot)_tf_broadcaster"  
-        args="0 0 0 0 0 0 /map /$(arg first_robot)/map 100"/>
+        args="0 0 0 0 0 0 $(arg first_robot)/map map 100"/>
     <node pkg="tf" type="static_transform_publisher" 
         name="world_to_$(arg second_robot)_tf_broadcaster" 
         args="0 0 0 0 0 0 /map /$(arg second_robot)/map 100"/>

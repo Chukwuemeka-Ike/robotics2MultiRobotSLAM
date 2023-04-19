@@ -1,7 +1,7 @@
 <launch>
     <arg name="ns" default="robot1"/>
-    <arg name="scan_topic" default="$(arg ns)/scan"/>
-    <arg name="base_frame" default="$(arg ns)/base_footprint"/>
+    <arg name="scan_topic" value="scan"/>
+    <arg name="base_frame" value="$(arg ns)/base_footprint"/>
     <arg name="odom_frame" value="$(arg ns)/odom"/>
     <arg name="map_frame" value="$(arg ns)/map"/>
     

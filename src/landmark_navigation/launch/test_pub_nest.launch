@@ -1,3 +1,0 @@
-<launch>
-    <include file="$(find landmark_navigation)/launch/test_pub.launch"/>
-</launch>

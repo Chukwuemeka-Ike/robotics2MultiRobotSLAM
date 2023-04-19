@@ -1,6 +1,0 @@
-<launch>
-    <!-- <arg name="ns" default=""/> -->
-    <node name="test_pub" pkg="landmark_navigation" type="test_pub.py" output="screen">
-        <remap from="chatter" to="donkey_kong"/>
-    </node>
-</launch>

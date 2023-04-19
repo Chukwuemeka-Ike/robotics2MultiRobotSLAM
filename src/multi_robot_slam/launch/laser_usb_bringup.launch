@@ -2,25 +2,30 @@
     <arg name="ns" default="robot1"/>
     <arg name="robot_type" value="$(env ROBOT_TYPE)" doc="robot_type [X1,X3,X3plus,R2,X7]"/>
 
-      <include file="$(find rplidar_ros)/launch/rplidar.launch">
+      <include ns="$(arg ns)"  file="$(find rplidar_ros)/launch/rplidar.launch">
             <arg name="frame_id" default="$(arg ns)/laser"/>
       </include>
-      <include file="$(find yahboomcar_multi)/launch/library/usb_cam.launch">
+      <include ns="$(arg ns)" file="$(find yahboomcar_multi)/launch/library/usb_cam.launch">
             <arg name="frame_id" default="$(arg ns)/usb_cam"/>
       </include>
-      <include file="$(find multi_robot_slam)/launch/bringup.launch">
+      <!-- <include file="$(find multi_robot_slam)/launch/bringup.launch">
+            <arg name="ns" default="$(arg ns)"/>
+      </include> -->
+      <include file="$(find yahboomcar_multi)/launch/library/bringup_multi.launch">
             <arg name="ns" default="$(arg ns)"/>
       </include>
 
-    <!-- Camera coordinate system. -->
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera"
-          args="0.0484 0 0.10403 0 0 0 $(arg ns)/base_link $(arg ns)/usb_cam 30" if="$(eval arg('robot_type') == 'X3')"/>
-    <node pkg="tf" type="static_transform_publisher" name="camera_link_to_camera"
-          args="0 0 0 0 0 0 $(arg ns)/camera_link $(arg ns)/usb_cam 30" if="$(eval arg('robot_type') == 'X3plus')"/>
-    
-    <!-- LIDAR coordinate system. -->
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
-          args="0.0435 5.2585E-05 0.11 3.1416 0 0 $(arg ns)/base_link $(arg ns)/laser 30" if="$(eval arg('robot_type') == 'X3')"/>
-    <node pkg="tf" type="static_transform_publisher" name="laser_link_to_laser"
-          args="0 0 0 3.1416 0 0  $(arg ns)/laser_link $(arg ns)/laser 30" if="$(eval arg('robot_type') == 'X3plus')"/>
+      <group ns="$(arg ns)">
+            <!-- Camera coordinate system. -->
+            <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera"
+                  args="0.0484 0 0.10403 0 0 0 $(arg ns)/base_link $(arg ns)/usb_cam 30" if="$(eval arg('robot_type') == 'X3')"/>
+            <node pkg="tf" type="static_transform_publisher" name="camera_link_to_camera"
+                  args="0 0 0 0 0 0 $(arg ns)/camera_link $(arg ns)/usb_cam 30" if="$(eval arg('robot_type') == 'X3plus')"/>
+            
+            <!-- LIDAR coordinate system. -->
+            <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
+                  args="0.0435 5.2585E-05 0.11 3.1416 0 0 $(arg ns)/base_link $(arg ns)/laser 30" if="$(eval arg('robot_type') == 'X3')"/>
+            <node pkg="tf" type="static_transform_publisher" name="laser_link_to_laser"
+                  args="0 0 0 3.1416 0 0  $(arg ns)/laser_link $(arg ns)/laser 30" if="$(eval arg('robot_type') == 'X3plus')"/>
+      </group>
 </launch>

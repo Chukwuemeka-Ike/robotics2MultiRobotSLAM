@@ -1,10 +1,11 @@
 <launch>
     <arg name="ns" default="robot2"/>
-    <include ns="robot2" file="$(find multi_robot_slam)/launch/laser_usb_bringup.launch">
+    <include file="$(find multi_robot_slam)/launch/laser_usb_bringup.launch">
         <arg name="ns" value="$(arg ns)"/>
     </include> 
-    <include ns="robot2" file="$(find multi_robot_slam)/launch/map.launch">
+    <include ns="$(arg ns)" file="$(find multi_robot_slam)/launch/map.launch">
         <arg name="use_rviz" default="false"/>
+        <arg name="ns" value="$(arg ns)"/>
         <arg name="map_type" default="gmapping"/>
     </include> 
 </launch>

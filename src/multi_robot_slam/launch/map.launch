@@ -1,5 +1,6 @@
 <launch>
     <arg name="ns" default="robot1"/>
+    <arg name="use_rviz" default="false"/>
     <arg name="map_type" default="gmapping" doc="opt: gmapping,hector,karto,cartographer"/>
 
     <include file="$(find multi_robot_slam)/launch/$(arg map_type).launch">
